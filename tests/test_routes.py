@@ -196,7 +196,7 @@ class TestAccountService(TestCase):
         account = self._create_accounts(5)[0]
         id = account.id
         resp = self.client.delete("{URL}/{ID}".format(URL= BASE_URL, ID = id))
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         resp = self.client.get("{URL}/{ID}".format(URL= BASE_URL, ID = id))
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
