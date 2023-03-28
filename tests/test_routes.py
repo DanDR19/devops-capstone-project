@@ -142,4 +142,51 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_method_not_allowed_read_account(self):
+        """ It should not Allow illegal method when called for read an account """
+        resp = self.client.post(BASE_URL + "/1")
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    def test_list_accounts(self):
+        """It should List all the accounts stored"""
+        accounts = self._create_accounts(5)
+        resp = self.client.get(
+            f"{BASE_URL}", content_type="application/json"
+        )
+        # Happy path
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 5)
+    
+    def test_list_accounts_empty(self):
+        """ It should not Return entries """
+        resp = self.client.get(
+            f"{BASE_URL}", content_type="application/json"
+        )
+        # Happy path
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 0)
+    
+    def test_illegal_call_list_accounts(self):
+        """ It should not Allow illegal method when called to list accounts """
+        resp = self.client.delete(BASE_URL)
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_account(self):
+        """ It should Update the account """
+        account = self._create_accounts(1)[0]
+        id = account.id
+        account.name = "KNOWN UPDATE"
+        self.client.put(BASE_URL + "/" + str(id), json=account.serialize())
+        resp = self.client.get(BASE_URL + "/" + str(id))
+        data = resp.get_json()
+        self.assertEqual(data["name"], "KNOWN UPDATE")
+    
+    def test_update_unexistent_account(self):
+        """ It should Return not found """
+        account = AccountFactory()
+        id = 0
+        account.name = "KNOWN UPDATE"
+        resp = self.client.put(BASE_URL + "/" + str(id), json=account.serialize())
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
