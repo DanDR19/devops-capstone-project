@@ -212,11 +212,11 @@ class TestAccountService(TestCase):
         resp = self.client.get("/", environ_overrides=HTTPS_ENVIRON)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         headers = {
-            'X-Frame-Options': 'SAMEORIGIN'
-            'X-XSS-Protection': '1; mode=block'
-            'X-Content-Type-Options': 'nosniff'
-            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\''
-            'Referrer-Policy': 'strict-origin-when-cross-origin'
+            'X-Frame-Options': 'SAMEORIGIN',
+            'X-XSS-Protection': '1; mode=block',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\'',
+            'Referrer-Policy': 'strict-origin-when-cross-origin',
         }
         for key, value in headers:
             self.assertEqual(resp.headers.get(key), value)
