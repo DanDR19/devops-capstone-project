@@ -190,3 +190,18 @@ class TestAccountService(TestCase):
         account.name = "KNOWN UPDATE"
         resp = self.client.put(BASE_URL + "/" + str(id), json=account.serialize())
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_existing_account(self):
+        """ It should Delete existing account """
+        account = self._create_accounts(5)[0]
+        id = account.id
+        resp = self.client.delete("{URL}/{ID}".format(URL= BASE_URL, ID = id))
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        resp = self.client.get("{URL}/{ID}".format(URL= BASE_URL, ID = id))
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_unexistent_account(self):
+        """ It should Return not found """
+        id = 0
+        resp = self.client.delete("{URL}/{ID}".format(URL= BASE_URL, ID = id))
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
