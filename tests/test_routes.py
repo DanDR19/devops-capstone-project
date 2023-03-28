@@ -18,6 +18,7 @@ DATABASE_URI = os.getenv(
 )
 
 BASE_URL = "/accounts"
+HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 
 
 ######################################################################
@@ -205,3 +206,17 @@ class TestAccountService(TestCase):
         id = 0
         resp = self.client.delete("{URL}/{ID}".format(URL= BASE_URL, ID = id))
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_presence_of_headers(self):
+        """ It should Return a set of headers """
+        resp = self.client.get("/", environ_overrides=HTTPS_ENVIRON)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        headers = {
+            'X-Frame-Options': 'SAMEORIGIN',
+            'X-XSS-Protection': '1; mode=block',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\'',
+            'Referrer-Policy': 'strict-origin-when-cross-origin',
+        }
+        for key, value in headers:
+            self.assertEqual(resp.headers.get(key), value)
