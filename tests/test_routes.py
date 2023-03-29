@@ -149,7 +149,7 @@ class TestAccountService(TestCase):
 
     def test_list_accounts(self):
         """It should List all the accounts stored"""
-        accounts = self._create_accounts(5)
+        self._create_accounts(5)
         resp = self.client.get(
             f"{BASE_URL}", content_type="application/json"
         )
