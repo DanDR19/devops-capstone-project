@@ -51,8 +51,9 @@ spec:
         fi
 
 ---
+---
 apiVersion: tekton.dev/v1beta1
-kind: task
+kind: Task
 metadata:
   name: nose
 spec:
@@ -65,7 +66,7 @@ spec:
       type: string
       default: "-v"
     - name: database_uri
-      description: Database URI
+      description: Database connection string
       type: string
       default: "sqlite:///test.db"
   steps:
@@ -73,13 +74,15 @@ spec:
       image: python:3.9-slim
       workingDir: $(workspaces.source.path)
       env:
-        - name: database_uri
+        - name: DATABASE_URI
           value: $(params.database_uri)
       script: |
         #!/bin/bash
         set -e
+
         echo "***** Installing dependencies *****"
         python -m pip install --upgrade pip wheel
         pip install -qr requirements.txt
+
         echo "***** Running nosetests with: $(params.args)"
         nosetests $(params.args)
