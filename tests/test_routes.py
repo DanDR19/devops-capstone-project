@@ -149,7 +149,7 @@ class TestAccountService(TestCase):
 
     def test_list_accounts(self):
         """It should List all the accounts stored"""
-        accounts = self._create_accounts(5)
+        self._create_accounts(5)
         resp = self.client.get(
             f"{BASE_URL}", content_type="application/json"
         )
@@ -157,7 +157,7 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(len(data), 5)
-    
+
     def test_list_accounts_empty(self):
         """ It should not Return entries """
         resp = self.client.get(
@@ -167,7 +167,7 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(len(data), 0)
-    
+
     def test_illegal_call_list_accounts(self):
         """ It should not Allow illegal method when called to list accounts """
         resp = self.client.delete(BASE_URL)
@@ -182,7 +182,7 @@ class TestAccountService(TestCase):
         resp = self.client.get(BASE_URL + "/" + str(id))
         data = resp.get_json()
         self.assertEqual(data["name"], "KNOWN UPDATE")
-    
+
     def test_update_unexistent_account(self):
         """ It should Return not found """
         account = AccountFactory()
@@ -195,13 +195,13 @@ class TestAccountService(TestCase):
         """ It should Delete existing account """
         account = self._create_accounts(5)[0]
         id = account.id
-        resp = self.client.delete("{URL}/{ID}".format(URL= BASE_URL, ID = id))
+        resp = self.client.delete("{URL}/{ID}".format(URL=BASE_URL, ID=id))
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        resp = self.client.get("{URL}/{ID}".format(URL= BASE_URL, ID = id))
+        resp = self.client.get("{URL}/{ID}".format(URL=BASE_URL, ID=id))
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_unexistent_account(self):
         """ It should Return not found """
         id = 0
-        resp = self.client.delete("{URL}/{ID}".format(URL= BASE_URL, ID = id))
+        resp = self.client.delete("{URL}/{ID}".format(URL=BASE_URL, ID=id))
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
